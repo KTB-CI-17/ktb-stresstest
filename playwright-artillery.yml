@@ -1,17 +1,81 @@
 config:
-  target: https://ktb-chat-test.goorm.team
+  target: http://localhost:3000  # 로컬 테스트용
+  # target: https://ktb-chat-test.goorm.team  # 실서버 테스트용
+
+  plugins:
+    ensure: {}
+    metrics-by-endpoint: {}
+    expect: {}
+    # 로깅 설정 추가
+    publish-metrics:
+      - type: file
+        path: "./logs/artillery-test.log"
+        format: json
 
   phases:
-  - duration: 1
-    arrivalRate: 1
+    # - name: "Warm up"
+    #   duration: 60
+    #   arrivalRate: 1
+    #   rampTo: 2
+    # - name: "Ramp up load"
+    #   duration: 120
+    #   arrivalRate: 2
+    #   rampTo: 5
+    # - name: "Sustained load"
+    #   duration: 180
+    #   arrivalRate: 5
+    - duration: 1
+      arrivalRate: 1
 
   engines:
     playwright:
       launchOptions:
         headless: true
+        timeout: 30000
     
   processor: "./stresstest/app.js"
 
+  # 글로벌 로깅 설정 추가
+  # verbose: true
+  # output: "./logs/artillery-report.json"
+
 scenarios:
-  - engine: playwright
-    flowFunction: "createNewChat" 
+  - name: "User Registration Flow"
+    engine: playwright
+    flowFunction: "registerUser"
+    weight: 5
+
+  - name: "Chat Creation Flow"
+    engine: playwright
+    flowFunction: "createNewChat"
+    weight: 4
+
+  - name: "Message Sending Flow"
+    engine: playwright
+    flowFunction: "sendMessageToChat"
+    weight: 5
+
+  - name: "Reaction Flow"
+    engine: playwright
+    flowFunction: "reactionToMessage"
+    weight: 3
+
+  - name: "File Upload Flow"
+    engine: playwright
+    flowFunction: "uploadFileToChat"
+    weight: 2
+
+  - name: "Profile Update Flow"
+    engine: playwright
+    flowFunction: "updateProfileImage"
+    weight: 1
+
+  - name: "AI Chat Flow"
+    engine: playwright
+    flowFunction: "generateChatAiResponse"
+    weight: 3
+
+  - name: "Chat Scroll Flow"
+    engine: playwright
+    flowFunction: "scrollChat"
+    weight: 2

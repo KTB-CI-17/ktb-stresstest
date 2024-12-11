@@ -8,7 +8,8 @@ const crypto = require('crypto');
 const passwd = "123123";
 const domain = "@test.com";
 const chatName = "asdfasdf";
-const site = "https://ktb-chat-test.goorm.team";
+// const site = "https://ktb-chat-test.goorm.team";
+const site = "http://localhost:3000";
 const filename = './photo/test.jpeg';
 const aiMention = "@wayneAI";
 const findText = "hello";
@@ -20,14 +21,17 @@ async function registerUser(page) {
   const email = id + domain;
 
   try {
+    if (!page) {
+      page = await getPage();
+    }
     await page.goto(site);
+    await addUser(page, id, passwd, email);
+    return page;
   } catch (e) {
     console.error('Error during page navigation:', e);
-    await browser.close();
+    throw e;
   }
-
-  await addUser(page, id, passwd, email);
-};
+}
 
 async function loginUser(page) {
   await registerUser(page);
@@ -56,9 +60,17 @@ async function reactionToMessage(page) {
 };
 
 async function uploadFileToChat(page) {
-  await registerUser(page);
-  await accessChat(page, chatName);
-  await uploadFile(page, filename);
+  try {
+    page = await registerUser(page);
+    if (!page) {
+      throw new Error("Failed to initialize page");
+    }
+    await accessChat(page, chatName);
+    await uploadFile(page, filename);
+  } catch (e) {
+    console.error('Error in uploadFileToChat:', e);
+    throw e;
+  }
 };
 
 async function updateProfileImage(page) {
@@ -74,13 +86,15 @@ async function generateChatAiResponse(page) {
 
 module.exports = { registerUser, loginUser, createNewChat, scrollChat, sendMessageToChat, reactionToMessage, uploadFileToChat, updateProfileImage, generateChatAiResponse };
 
-/* for test
+// /* for test
 let browserInstance = null;
 let pageInstance = null;
 
 const getPage = async () => {
   if (!browserInstance) {
-    browserInstance = await chromium.launch({ headless: true });
+    browserInstance = await chromium.launch({ 
+      headless: true
+    });
     console.log("Browser launched");
   }
 
@@ -113,4 +127,4 @@ const main = async () => {
 };
 
 main();
-*/
+// */
