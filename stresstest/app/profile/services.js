@@ -14,7 +14,22 @@ const addProfileImage = async (page, filename) => {
   await page.getByRole('button', { name: '저장' }).click();
   await page.waitForTimeout(3000);
   
-  console.info('Profile image added');
+  // PersistentAvatar 컴포넌트 구조에 맞춘 검증
+  const profileAvatar = page.locator('div.persistent-avatar');
+  await expect(profileAvatar).toBeVisible();
+  
+  // Avatar.Image 컴포넌트 검증
+  const avatarImage = profileAvatar.locator('img');
+  await expect(avatarImage).toBeVisible();
+  await expect(avatarImage).toHaveAttribute('loading', 'lazy');
+  await expect(avatarImage).not.toHaveAttribute('src', /placeholder/);
+
+  // 프로필 저장 성공 메시지 확인 (Toast 컴포넌트)
+  const successToast = page.locator('div[role="alert"]');
+  await expect(successToast).toBeVisible();
+  await expect(successToast).toContainText('프로필');
+
+  console.info('Profile image added and verified');
 };
 
 module.exports = { addProfileImage };
