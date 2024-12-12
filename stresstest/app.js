@@ -8,7 +8,9 @@ const crypto = require('crypto');
 const passwd = "123123";
 const domain = "@test.com";
 const chatName = "asdfasdf";
-const site = "https://ktb-chat-test.goorm.team";
+// const site = "https://ktb-chat-test.goorm.team";
+const site = "http://localhost:3000";
+// const site = "http://total-app-alb-front-1475286836.ap-northeast-2.elb.amazonaws.com/";
 const filename = './photo/test.jpeg';
 const aiMention = "@wayneAI";
 const findText = "hello";
@@ -23,7 +25,8 @@ async function registerUser(page) {
     await page.goto(site);
   } catch (e) {
     console.error('Error during page navigation:', e);
-    await browser.close();
+    // await browser.close();
+    throw e;
   }
 
   await addUser(page, id, passwd, email);
