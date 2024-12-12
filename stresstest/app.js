@@ -16,9 +16,9 @@ const msg = "hello";
 const group = "group_b";
 
 async function registerUser(page) {
-  if (!page) {
-    page = await getPage();
-  }
+  // if (!page) {
+  //   page = await getPage();
+  // }
 
   const id = `${group}_${Date.now()}`
   const email = id + domain;
@@ -27,8 +27,7 @@ async function registerUser(page) {
     await page.goto(site);
   } catch (e) {
     console.error('Error during page navigation:', e);
-    // await browser.close();
-    throw e;
+    await browser.close();
   }
 
   await addUser(page, id, passwd, email);
