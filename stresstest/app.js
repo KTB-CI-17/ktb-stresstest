@@ -16,10 +16,6 @@ const msg = "hello";
 const group = "group_b";
 
 async function registerUser(page) {
-  // if (!page) {
-  //   page = await getPage();
-  // }
-
   const id = `${group}_${Date.now()}`
   const email = id + domain;
 
@@ -49,7 +45,6 @@ async function scrollChat(page) {
 
 async function sendMessageToChat(page) {
   await registerUser(page);
-  const chatName = `${group}_${Date.now()}`;
   await createChat(page, chatName);
   await accessChat(page, chatName);
   await talkChat(page, msg);
@@ -57,7 +52,6 @@ async function sendMessageToChat(page) {
 
 async function reactionToMessage(page) {
   await registerUser(page);
-  const chatName = `${group}_${Date.now()}`;
   await createChat(page, chatName);
   await accessChat(page, chatName);
   await addReactions(page, findText);
@@ -65,7 +59,6 @@ async function reactionToMessage(page) {
 
 async function uploadFileToChat(page) {
   await registerUser(page);
-  const chatName = `${group}_${Date.now()}`;
   await createChat(page, chatName);
   await accessChat(page, chatName);
   await uploadFile(page, filename);
@@ -78,7 +71,6 @@ async function updateProfileImage(page) {
 
 async function generateChatAiResponse(page) {
   await registerUser(page);
-  const chatName = `${group}_${Date.now()}`;
   await createChat(page, chatName);
   await accessChat(page, chatName);
   await generateAiResponse(page, aiMention);
