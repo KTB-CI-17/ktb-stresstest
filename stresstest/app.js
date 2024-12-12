@@ -16,6 +16,10 @@ const msg = "hello";
 const group = "group_b";
 
 async function registerUser(page) {
+  if (!page) {
+    page = await getPage();
+  }
+
   const id = `${group}_${Date.now()}`
   const email = id + domain;
 
@@ -23,7 +27,8 @@ async function registerUser(page) {
     await page.goto(site);
   } catch (e) {
     console.error('Error during page navigation:', e);
-    await browser.close();
+    // await browser.close();
+    throw e;
   }
 
   await addUser(page, id, passwd, email);
@@ -45,18 +50,24 @@ async function scrollChat(page) {
 
 async function sendMessageToChat(page) {
   await registerUser(page);
+  const chatName = `${group}_${Date.now()}`;
+  await createChat(page, chatName);
   await accessChat(page, chatName);
   await talkChat(page, msg);
 };
 
 async function reactionToMessage(page) {
   await registerUser(page);
+  const chatName = `${group}_${Date.now()}`;
+  await createChat(page, chatName);
   await accessChat(page, chatName);
   await addReactions(page, findText);
 };
 
 async function uploadFileToChat(page) {
   await registerUser(page);
+  const chatName = `${group}_${Date.now()}`;
+  await createChat(page, chatName);
   await accessChat(page, chatName);
   await uploadFile(page, filename);
 };
@@ -68,6 +79,8 @@ async function updateProfileImage(page) {
 
 async function generateChatAiResponse(page) {
   await registerUser(page);
+  const chatName = `${group}_${Date.now()}`;
+  await createChat(page, chatName);
   await accessChat(page, chatName);
   await generateAiResponse(page, aiMention);
 };
@@ -93,12 +106,12 @@ const getPage = async () => {
 };
 
 const run = async () => {
-  // await loginUser();
+  await loginUser();
   // await createNewChat();
   // await scrollChat();
   // await sendMessageToChat();
   // await reactionToMessage();
-  await uploadFileToChat();
+  // await uploadFileToChat();
   // await updateProfileImage();
   // await generateChatAiResponse();
 };
@@ -113,4 +126,6 @@ const main = async () => {
 };
 
 main();
+
+module.exports.run = run;
 */
